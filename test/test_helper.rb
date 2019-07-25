@@ -8,4 +8,18 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   include FactoryBot::Syntax::Methods
+
+  def createUser
+    @user ||= create(:user)
+  end
+
+  def createAuthHeader
+    createUser()
+    @auth_header = { Authorization: "Bearer #{JsonWebToken.encode(user_id: @user.id)}" }
+  end
+
+  def createProducer
+    createAuthHeader()
+    @producer ||= create(:producer, user: @user)
+  end
 end
