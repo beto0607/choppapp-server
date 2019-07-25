@@ -10,7 +10,7 @@ class ActiveSupport::TestCase
   include FactoryBot::Syntax::Methods
 
   def createUser
-    @user ||= create(:user)
+    @user = create(:user)
   end
 
   def createAuthHeader
@@ -20,7 +20,7 @@ class ActiveSupport::TestCase
 
   def createProducer
     createAuthHeader()
-    @producer ||= create(:producer, user: @user)
+    @producer = create(:producer, user: @user)
   end
 
   def createAdmin
