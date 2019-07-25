@@ -20,7 +20,9 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
+  username: choppapp
+  password: <%= ENV['CHOPPAPP_SERVER_DATABASE_PASSWORD'] %>
+  
 development:
   <<: *default
   database: choppapp-server_development
@@ -81,5 +83,3 @@ test:
 production:
   <<: *default
   database: choppapp-server_production
-  username: choppapp-server
-  password: <%= ENV['CHOPPAPP-SERVER_DATABASE_PASSWORD'] %>
