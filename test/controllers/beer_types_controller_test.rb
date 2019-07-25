@@ -18,12 +18,24 @@ class BeerTypesControllerTest < ActionDispatch::IntegrationTest
   test "should create beer_type" do
     create_admin()
     post beer_types_url, params: { beer_type: attributes_for(:beer_type) }, as: :json, headers: @auth_header
-    assert_response 201
+    assert_response :created
+  end
+  test "Only an admin can create BeerTypes" do
+    create_auth_header()
+    post beer_types_url, params: { beer_type: attributes_for(:beer_type) }, as: :json, headers: @auth_header
+    assert_response :unauthorized
   end
 
   # Delete
   test "should destroy beer_type" do
     create_admin()
+    @beer_type = create(:beer_type)
+    delete beer_type_url(@beer_type), as: :json, headers: @auth_header
+    assert_response :no_content
+    assert @beer_type.destroyed?
+  end
+  test "Only an admin can destroy a BeerType" do
+    create_auth_header()
     @beer_type = create(:beer_type)
     delete beer_type_url(@beer_type), as: :json, headers: @auth_header
     assert_response :no_content
