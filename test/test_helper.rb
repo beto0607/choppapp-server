@@ -22,4 +22,9 @@ class ActiveSupport::TestCase
     createAuthHeader()
     @producer ||= create(:producer, user: @user)
   end
+
+  def createAdmin
+    createAuthHeader()
+    @user.update(is_admin: true)
+  end
 end
