@@ -30,4 +30,9 @@ class ProducerTest < ActiveSupport::TestCase
     original = create(:producer)
     assert build(:producer, name: original.name).invalid?
   end
+
+  test "Should be invalid, only one producer per user" do
+    original = create(:producer)
+    assert build(:producer, user: original.user).invalid?
+  end
 end
