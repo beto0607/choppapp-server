@@ -82,23 +82,41 @@ class ProducersControllerTest < ActionDispatch::IntegrationTest
     patch producer_url(@producer), params: { producer: nil }, as: :json, header: @auth_header
     assert_response :ok
   end
+  # Active
+  test "Admin can active a producer" do
+    createProducer()
+    createAdmin()
+    patch producer_url(@producer) + "/active", as: :json, header: @auth_header
+    assert_response :ok
+    assert_equal @producer.status, "ACTIVE"
+  end
+  # Block
+  test "Admin can block a producer" do
+    createProducer()
+    createAdmin()
+    patch producer_url(@producer) + "/block", as: :json, header: @auth_header
+    assert_response :ok
+    assert_equal @producer.status, "BLOCKED"
+  end
   # Delete
   test "Should destroy producer" do
     createProducer()
     delete producer_url(@producer), as: :json, header: @auth_header
     assert_response :no_content
+    assert @producer.destroyed?
   end
   test "Should destroy producer and beers" do
     createProducer()
     @beer = create(:beer, producer: @producer)
     delete producer_url(@producer), as: :json, header: @auth_header
     assert_response :no_content
+    assert @producer.destroyed?
     assert @beer.destroyed?
   end
   test "Should return NOT FOUND on delete" do
     createProducer()
     delete producer_url(-1), as: :json, header: @auth_header
-    assert_response :no_content
+    assert_response :not_found
   end
   test "Shouldn't destroy producer without user logged in" do
     createProducer()
@@ -110,5 +128,12 @@ class ProducersControllerTest < ActionDispatch::IntegrationTest
     createProducer()
     delete producer_url(@other_producer), as: :json, header: @auth_header
     assert_response :unauthorized
+  end
+  test "Admin can destroy producer" do
+    createProducer()
+    createAdmin()
+    delete producer_url(@other_producer), as: :json, header: @auth_header
+    assert_response :no_content
+    assert @producer.destroyed?
   end
 end
