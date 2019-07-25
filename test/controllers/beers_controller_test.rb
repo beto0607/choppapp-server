@@ -1,38 +1,72 @@
-require 'test_helper'
+require "test_helper"
 
 class BeersControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @beer = beers(:one)
-  end
-
-  test "should get index" do
+  # Index
+  test "Should get index" do
     get beers_url, as: :json
-    assert_response :success
+    assert_response :ok
+  end
+  
+  # Creation
+  test "Should create beer" do
+    createProducer()
+    post beers_url, params: { beer: attributes_for(:beer) }, as: :json, headers: @auth_header
+    assert_response :created
+  end
+  test "Shouldn't create beer without login" do
+    post beers_url, params: { beer: attributes_for(:beer) }, as: :json
+    assert_response :unauthorized
   end
 
-  test "should create beer" do
-    assert_difference('Beer.count') do
-      post beers_url, params: { beer: { alcohol: @beer.alcohol, description: @beer.description, ibu: @beer.ibu, name: @beer.name, producer_id: @beer.producer_id } }, as: :json
-    end
-
-    assert_response 201
-  end
-
-  test "should show beer" do
+  # Show
+  test "Should show beer" do
+    @beer = create(:beer)
     get beer_url(@beer), as: :json
-    assert_response :success
+    assert_response :ok
+  end
+  test "Should return 404" do
+    get beer_url(-1), as: :json
+    assert_response :not_found
   end
 
-  test "should update beer" do
-    patch beer_url(@beer), params: { beer: { alcohol: @beer.alcohol, description: @beer.description, ibu: @beer.ibu, name: @beer.name, producer_id: @beer.producer_id } }, as: :json
-    assert_response 200
+  # Update
+  test "Should update beer" do
+    createProducer()
+    @beer = create(:beer, producer: @producer)
+    patch beer_url(@beer), params: { beer: attributes_for(:beer) }, as: :json, headers: @auth_header
+    assert_response :ok
+  end
+  test "Producer must be the owner" do
+    createProducer()
+    @other_producer = create(:producer)
+    @beer = create(:beer, producer: @other_producer)
+    patch beer_url(@beer), params: { beer: attributes_for(:beer) }, as: :json, headers: @auth_header
+    assert_response :unauthorized
+  end
+  test "Should return bad_request when called without parameters" do
+    createProducer()
+    @beer = create(:beer, producer: @other_producer)
+    patch beer_url(@beer), params: { beer: nil }, as: :json, headers: @auth_header
+    assert_response :bad_request
   end
 
-  test "should destroy beer" do
-    assert_difference('Beer.count', -1) do
-      delete beer_url(@beer), as: :json
-    end
-
-    assert_response 204
+  # Delete
+  test "Should destroy beer" do
+    createProducer()
+    @beer = create(:beer, producer: @other_producer)
+    delete beer_url(@beer), as: :json, headers: @auth_header
+    assert_response :no_content
+  end
+  test "Should return 404" do
+    createProducer()
+    delete beer_url(-1), as: :json, headers: @auth_header
+    assert_response :no_content
+  end
+  test "Should return 404" do
+    createProducer()
+    @other_producer = create(:producer)
+    @beer = create(:beer, producer: @other_producer)
+    delete beer_url(@beer), as: :json, headers: @auth_header
+    assert_response :no_content
   end
 end
