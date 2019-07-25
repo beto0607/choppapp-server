@@ -4,5 +4,6 @@ FactoryBot.define do
     description { "MyText" }
     place { "MyString" }
     status { "MyString" }
+    user
   end
 end

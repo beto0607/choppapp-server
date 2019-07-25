@@ -4,6 +4,8 @@ FactoryBot.define do
     alcohol { 1.5 }
     ibu { 1 }
     description { "MyText" }
-    producer { nil }
+    status { "ACTIVE" }
+    beer_type
+    producer
   end
 end
