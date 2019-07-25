@@ -32,7 +32,7 @@ class ProducersControllerTest < ActionDispatch::IntegrationTest
   end
   # Creation
   test "Should create producer" do
-    createAuthHeader()
+    create_auth_header()
     post producers_url, params: { producer: attributes_for(:producer) }, as: :json, header: @auth_header
     assert_response :created
   end
@@ -41,72 +41,72 @@ class ProducersControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
   test "Shouldn't create producer whithout parameteres" do
-    createAuthHeader()
+    create_auth_header()
     post producers_url, params: { producer: nil }, as: :json, header: @auth_header
     assert_response :bad_request
   end
   test "Shouldn't create 2 producers with one user" do
-    createProducer()
+    create_producer()
     post producers_url, params: { producer: attributes_for(:producer) }, as: :json, header: @auth_header
     assert_response :conflict
   end
   test "Shouldn't create 2 producers with the same name" do
-    createProducer()
+    create_producer()
     post producers_url, params: { producer: attributes_for(:producer, name: @producer.name) }, as: :json, header: @auth_header
     assert_response :conflict
   end
   # Update
   test "Should update producer" do
-    createProducer()
+    create_producer()
     patch producer_url(@producer), params: { producer: attributes_for(:producer) }, as: :json, header: @auth_header
     assert_response :ok
   end
   test "Shouldn't update producer without login" do
-    createProducer()
+    create_producer()
     patch producer_url(@producer), params: { producer: attributes_for(:producer) }, as: :json
     assert_response :unauthorized
   end
   test "Shouldn't update other user's producer" do
     @other_producer = create(:producer)
-    createProducer()
+    create_producer()
     patch producer_url(@other_producer), params: { producer: attributes_for(:producer) }, as: :json, header: @auth_header
     assert_response :unauthorized
   end
   test "Shouldn't update producer with duplicated name" do
-    createProducer()
+    create_producer()
     patch producer_url(@producer), params: { producer: attributes_for(:producer, name: @producer.name) }, as: :json, header: @auth_header
     assert_response :conflict
   end
   test "Shouldn't update producer without parameters" do
-    createProducer()
+    create_producer()
     patch producer_url(@producer), params: { producer: nil }, as: :json, header: @auth_header
     assert_response :ok
   end
   # Active
   test "Admin can active a producer" do
-    createProducer()
-    createAdmin()
+    create_producer()
+    create_admin()
     patch producer_url(@producer) + "/active", as: :json, header: @auth_header
     assert_response :ok
     assert_equal @producer.status, "ACTIVE"
   end
   # Block
   test "Admin can block a producer" do
-    createProducer()
-    createAdmin()
+    create_producer()
+    create_admin()
     patch producer_url(@producer) + "/block", as: :json, header: @auth_header
     assert_response :ok
     assert_equal @producer.status, "BLOCKED"
   end
   # Delete
   test "Should destroy producer" do
-    createProducer()
+    create_producer()
     delete producer_url(@producer), as: :json, header: @auth_header
     assert_response :no_content
     assert @producer.destroyed?
   end
   test "Should destroy producer and beers" do
-    createProducer()
+    create_producer()
     @beer = create(:beer, producer: @producer)
     delete producer_url(@producer), as: :json, header: @auth_header
     assert_response :no_content
@@ -114,24 +114,24 @@ class ProducersControllerTest < ActionDispatch::IntegrationTest
     assert @beer.destroyed?
   end
   test "Should return NOT FOUND on delete" do
-    createProducer()
+    create_producer()
     delete producer_url(-1), as: :json, header: @auth_header
     assert_response :not_found
   end
   test "Shouldn't destroy producer without user logged in" do
-    createProducer()
+    create_producer()
     delete producer_url(@producer), as: :json
     assert_response :unauthorized
   end
   test "Shouldn't destroy other user's producer" do
     @other_producer = create(:producer)
-    createProducer()
+    create_producer()
     delete producer_url(@other_producer), as: :json, header: @auth_header
     assert_response :unauthorized
   end
   test "Admin can destroy producer" do
-    createProducer()
-    createAdmin()
+    create_producer()
+    create_admin()
     delete producer_url(@other_producer), as: :json, header: @auth_header
     assert_response :no_content
     assert @producer.destroyed?

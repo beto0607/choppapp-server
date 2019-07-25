@@ -16,14 +16,14 @@ class BeerTypesControllerTest < ActionDispatch::IntegrationTest
 
   # Creation
   test "should create beer_type" do
-    createAdmin()
+    create_admin()
     post beer_types_url, params: { beer_type: attributes_for(:beer_type) }, as: :json, headers: @auth_header
     assert_response 201
   end
 
   # Delete
   test "should destroy beer_type" do
-    createAdmin()
+    create_admin()
     @beer_type = create(:beer_type)
     delete beer_type_url(@beer_type), as: :json, headers: @auth_header
     assert_response :no_content

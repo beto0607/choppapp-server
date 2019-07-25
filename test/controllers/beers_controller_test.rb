@@ -9,7 +9,7 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
   
   # Creation
   test "Should create beer" do
-    createProducer()
+    create_producer()
     post beers_url, params: { beer: attributes_for(:beer) }, as: :json, headers: @auth_header
     assert_response :created
   end
@@ -31,20 +31,20 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
 
   # Update
   test "Should update beer" do
-    createProducer()
+    create_producer()
     @beer = create(:beer, producer: @producer)
     patch beer_url(@beer), params: { beer: attributes_for(:beer) }, as: :json, headers: @auth_header
     assert_response :ok
   end
   test "Producer must be the owner" do
-    createProducer()
+    create_producer()
     @other_producer = create(:producer)
     @beer = create(:beer, producer: @other_producer)
     patch beer_url(@beer), params: { beer: attributes_for(:beer) }, as: :json, headers: @auth_header
     assert_response :unauthorized
   end
   test "Should return bad_request when called without parameters" do
-    createProducer()
+    create_producer()
     @beer = create(:beer, producer: @other_producer)
     patch beer_url(@beer), params: { beer: nil }, as: :json, headers: @auth_header
     assert_response :bad_request
@@ -52,18 +52,18 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
 
   # Delete
   test "Should destroy beer" do
-    createProducer()
+    create_producer()
     @beer = create(:beer, producer: @other_producer)
     delete beer_url(@beer), as: :json, headers: @auth_header
     assert_response :no_content
   end
   test "Should return 404" do
-    createProducer()
+    create_producer()
     delete beer_url(-1), as: :json, headers: @auth_header
     assert_response :no_content
   end
   test "Should return 404" do
-    createProducer()
+    create_producer()
     @other_producer = create(:producer)
     @beer = create(:beer, producer: @other_producer)
     delete beer_url(@beer), as: :json, headers: @auth_header
