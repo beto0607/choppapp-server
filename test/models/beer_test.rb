@@ -2,6 +2,7 @@ require "test_helper"
 
 class BeerTest < ActiveSupport::TestCase
   test "Should be valid" do
+    p create(:beer_type)
     assert build(:beer).valid?
   end
 

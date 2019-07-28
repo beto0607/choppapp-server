@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :beer_type do
-    name { "MyString" }
+    sequence :name do |n|
+      "Beer type ##{n}"
+    end
     description { "MyText" }
   end
 end

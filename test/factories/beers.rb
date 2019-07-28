@@ -1,11 +1,13 @@
 FactoryBot.define do
   factory :beer do
-    name { "MyString" }
+    sequence :name do |n|
+      "beer ##{n}"
+    end
     alcohol { 1.5 }
     ibu { 1 }
     description { "MyText" }
     status { "ACTIVE" }
-    beer_type
     producer
+    beer_type
   end
 end
