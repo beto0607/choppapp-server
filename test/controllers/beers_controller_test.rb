@@ -6,7 +6,7 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
     get beers_url, as: :json
     assert_response :ok
   end
-  
+
   # Creation
   test "Should create beer" do
     create_producer()
@@ -24,7 +24,7 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
     get beer_url(@beer), as: :json
     assert_response :ok
   end
-  test "Should return 404" do
+  test "Should return 404 - show" do
     get beer_url(-1), as: :json
     assert_response :not_found
   end
@@ -49,6 +49,12 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
     patch beer_url(@beer), params: { beer: nil }, as: :json, headers: @auth_header
     assert_response :bad_request
   end
+  test "Should return 404 - update" do
+    create_producer()
+    @beer = create(:beer, producer: @other_producer)
+    patch beer_url(@beer), params: { beer: nil }, as: :json, headers: @auth_header
+    assert_response :not_found
+  end
 
   # Delete
   test "Should destroy beer" do
@@ -63,7 +69,7 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
     delete beer_url(@beer), as: :json, headers: @auth_header
     assert_response :no_content
   end
-  test "Should return 404" do
+  test "Should return 404 - delete" do
     create_producer()
     delete beer_url(-1), as: :json, headers: @auth_header
     assert_response :not_found
