@@ -53,20 +53,32 @@ class BeersControllerTest < ActionDispatch::IntegrationTest
   # Delete
   test "Should destroy beer" do
     create_producer()
-    @beer = create(:beer, producer: @other_producer)
+    @beer = create(:beer, producer: @producer)
+    delete beer_url(@beer), as: :json, headers: @auth_header
+    assert_response :no_content
+  end
+  test "Admin can destroy beer" do
+    @beer = create(:beer)
+    create_admin()
     delete beer_url(@beer), as: :json, headers: @auth_header
     assert_response :no_content
   end
   test "Should return 404" do
     create_producer()
     delete beer_url(-1), as: :json, headers: @auth_header
-    assert_response :no_content
+    assert_response :not_found
   end
-  test "Should return 404" do
+  test "Shouldn't destroy a beer if not logged in" do
+    create_producer()
+    @beer = create(:beer, producer: @other_producer)
+    delete beer_url(@beer), as: :json
+    assert_response :not_found
+  end
+  test "Shouldn't destroy others producer Beer" do
     create_producer()
     @other_producer = create(:producer)
     @beer = create(:beer, producer: @other_producer)
     delete beer_url(@beer), as: :json, headers: @auth_header
-    assert_response :no_content
+    assert_response :unauthorized
   end
 end
