@@ -31,8 +31,8 @@ ActiveRecord::Schema.define(version: 2019_07_28_192537) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
-    t.bigint "beer_types_id"
-    t.index ["beer_types_id"], name: "index_beers_on_beer_types_id"
+    t.bigint "beer_type_id"
+    t.index ["beer_type_id"], name: "index_beers_on_beer_type_id"
     t.index ["producer_id"], name: "index_beers_on_producer_id"
   end
 
@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(version: 2019_07_28_192537) do
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
-  add_foreign_key "beers", "beer_types", column: "beer_types_id"
+  add_foreign_key "beers", "beer_types"
   add_foreign_key "beers", "producers"
   add_foreign_key "producers", "users"
   add_foreign_key "votes", "beers"
