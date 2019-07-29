@@ -10,8 +10,9 @@ Rails.application.routes.draw do
     get :votes, to: "votes#by_producer"
   end
   resources :votes
-  resources :users, only:[:index, :show, :delete ]do 
-    match 'block', to: 'user#block', via: [:put, :patch]
-    match 'active', to: 'user#active', via: [:put, :patch]
+  resources :users, only: [:index, :show, :delete] do
+    match "block", to: "user#block", via: [:put, :patch]
+    match "active", to: "user#active", via: [:put, :patch]
+    get :votes, to: "votes#by_user"
   end
 end
