@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :beer_types, only: [:index, :create, :delete] do
     get :beers, to: "beers#by_beer_type"
+    get :ranking, to: "ranking#index_by_beer_type"
   end
   resources :beers do
     get :votes, to: "votes#by_beer"
@@ -15,4 +16,5 @@ Rails.application.routes.draw do
     match "active", to: "user#active", via: [:put, :patch]
     get :votes, to: "votes#by_user"
   end
+  get :ranking, to: "ranking#index"
 end
