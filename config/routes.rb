@@ -17,4 +17,5 @@ Rails.application.routes.draw do
     get :votes, to: "votes#by_user"
   end
   get :ranking, to: "ranking#index"
+  post '/auth/login', to: 'authentication#login'
 end
