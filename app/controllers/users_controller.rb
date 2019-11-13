@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_action :authorize_request, only: [:index, :destroy]
+  before_action :admin_request, only: [:index]
   before_action :set_user, only: [:show, :update, :destroy]
 
   # GET /users
@@ -10,6 +12,14 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    if authorization_header then
+      authorize_request
+    end
+    if !@user.is_private || (@current_user && @current_user.id == @user.id) then
+      render json: @user, status: :ok
+    else
+      head :no_content
+    end
   end
 
   # POST /users
@@ -37,17 +47,25 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user.destroy
+    if admin_request? || @user.id == @current_user.id then
+      @user.destroy
+      head :no_content
+    else
+      render json: {errors: ""}, status: :forbidden
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def user_params
-      params.require(:user).permit(:email, :password_digest)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = User.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { errors: "User not found" }, status: :not_found
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def user_params
+    params.require(:user).permit(:email, :password_digest)
+  end
 end

@@ -4,7 +4,7 @@ FactoryBot.define do
       "username#{n}"
     end
     email { "#{username}@example.com" }
-    password_digest { "MyString" }
+    password { 'password123456'}
     is_admin { false }
     is_private { false }
     factory :admin do

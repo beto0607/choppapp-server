@@ -28,13 +28,17 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
   test "shouldn't show info of a private user" do
-    skip()
     create_user()
-    @user.update(private: true)
+    @user.update(is_private: true)
     get user_url(@user), as: :json
-    assert_response :not_found
+    assert_response :no_content
   end
-
+  test "should show info of an user itself when is private" do
+    create_auth_header()
+    @user.update(is_private: true)
+    get user_url(@user), as: :json, headers: @auth_header
+    assert_response :ok
+  end
   # Active
   test "should active user" do
     skip()
@@ -72,7 +76,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     create_auth_header()
     delete user_url(@user), as: :json, headers: @auth_header
     assert_response :no_content
-    assert @new_user.destroyed?
+    assert @user.destroyed?
   end
   test "should destroy user by admin" do
     create_admin()
@@ -90,6 +94,6 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     create_auth_header()
     @new_user = create(:user)
     delete user_url(@new_user), as: :json, headers: @auth_header
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 end
