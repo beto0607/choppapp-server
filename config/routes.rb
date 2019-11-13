@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :beer_types, only: [:index, :create, :delete] do
+  resources :beer_types, only: [:index, :create, :destroy] do
     get :beers, to: "beers#by_beer_type"
     get :ranking, to: "ranking#index_by_beer_type"
   end
@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     get :votes, to: "votes#by_producer"
   end
   resources :votes
-  resources :users, only: [:index, :show, :delete] do
+  resources :users, only: [:index, :show, :destroy] do
     match "block", to: "user#block", via: [:put, :patch]
     match "active", to: "user#active", via: [:put, :patch]
     get :votes, to: "votes#by_user"
